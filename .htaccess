@@ -1,0 +1,19 @@
+
+<ifmodule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/html text/plain text/xml application/xml application/xhtml+xml text/javascript text/css application/x-javascript application/javascript
+</ifmodule>
+
+RewriteEngine on
+RewriteBase /
+Directoryindex index.php
+
+ErrorDocument 404 /404.php
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+
+
+
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^js/ws.js$ js/websocket.php [L]
+
