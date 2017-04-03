@@ -64,7 +64,7 @@ class PHPWebSocket
 	const WS_STATUS_MESSAGE_TOO_BIG =          1004;
 
 	const WS_STATUS_TIMEOUT = 3000;
-	protected  $trusted_host='http://hc.buldakoff.com';
+	protected  $trusted_host='';
 
 	// global vars
 	public $wsClients       = array();
@@ -255,7 +255,7 @@ class PHPWebSocket
 		$clientID = $this->wsGetNextClientID();
 
 		// store initial client data
-		$this->wsClients[$clientID] = array($socket, '', self::WS_READY_STATE_CONNECTING, time(), false, 0, $clientIP, false, 0, '', 0, 0,0,0);
+		$this->wsClients[$clientID] = array($socket, '', self::WS_READY_STATE_CONNECTING, time(), false, 0, $clientIP, false, 0, '', 0, 0,0,0,0);
 
 		// store socket - used for socket_select()
 		$this->wsRead[$clientID] = $socket;

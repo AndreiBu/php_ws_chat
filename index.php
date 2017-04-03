@@ -14,52 +14,90 @@
     <a href="#" onclick="var text=$('#msg_text').val();var id=$('#ch_lists option:selected').val(); if(text=='' || id==''){return false;}HC_WS.send_message_to(id,text,onmessage_);return false;">send msg</a>
 </div>
 
+<?php
+/*
 <div style="border: 1px solid #ddd; margin: 80px; padding: 20px;">
-    <input type="text" placeholder="channal name" id="channal_name"> <a href="#" onclick="var name=$('#channal_name').val(); if(name==''){return false;}HC_WS.create_channel(name+'_channel',create_channel_);return false;">create channel</a>
-    <a href="#" id="channel_list" onclick="HC_WS.channel_list(channel_list_);return false;">channel list</a>
+<input type="text" placeholder="channal name" id="channal_name"> <a href="#" onclick="var name=$('#channal_name').val(); if(name==''){return false;}HC_WS.create_channel(name+'_channel',create_channel_);return false;">create channel</a>
+<a href="#" id="channel_list" onclick="HC_WS.channel_list(channel_list_);return false;">channel list</a>
 </div>
+*/
+?>
+
+<div class="button online" onclick="go_online();" style="display: none;width: 200px;border: none;background: #97c226;color: #333;text-align: center; padding: 8px 20px;margin: 4px;font: 15px Verdana;cursor: pointer;">go online</div>
+<div class="button offline" onclick="go_offline();" style="display: none;width: 200px;border: none;background: #999;color: #000;text-align: center; padding: 8px 20px;margin: 4px;font: 15px Verdana;cursor: pointer;">go offline</div>
 
 <div id="syslog" style="border: 1px solid #ddd; margin: 80px; padding: 20px;"></div>
 
 <script>
+function go_online(){
+	$('.online').hide();$('.offline').show();
+	HC_WS.send_message_to('999','online',onmessage_online);	
+}
+function go_offline(){
+	$('.online').show();$('.offline').hide();
+	HC_WS.send_message_to('999','offline',onmessage_online);	
+}
+function onmessage_online(data)
+{
+	console.log(data);
+}
+function _system_callback(data)
+{
+	console.log('system');
+	console.log(data);
+}
+
+//#######################################################
+
 function _after_connect(){
 	HC_WS.follow_channel('988',follow_channel_,onmessage_988);
+	go_offline();
+	if($('#chatAudio').length==0){$('<audio id="chatAudio"><source src="/help/adm.ogg" type="audio/ogg"><source src="/help/adm.mp3" type="audio/mpeg"></audio>').appendTo('body');}
 }
 function _after_disconnect(){
 	//console.log('after_disconnect');
 }
-function onmessage_988(data)
-{
+function onmessage_988(data){
 	HC_WS.follow_channel(data.channel.id,follow_channel_,onmessage_);
 	//HC_WS.channel_list(channel_list_);
 }
 
-
+//############################################################################
 function onmessage_(data)
 {
 	console.log(data);
-	var style='';
-	if(data.autor==0)
+	if(data.status=='online_offline')
 	{
-		style='floaT: left; background: #f9f9f9; margin: 4px 40px 4px 4px;';
+	//if(data.msg=='online'){}
+	//else{append_iframe();}
 	}
-	else
+	if(data.status=='ok')
 	{
-		style='floaT: right; background: #f1fcd4; margin: 4px 4px 4px 40px;';
-	}
-	$('#ws_log').prepend('<div style="clear : both; "></div>');
-	$('#ws_log').prepend('<div style="'+style+' padding: 4px 10px; border-radius: 6px; "><div><b>'+data.channel.name+'</b> '+data.dat+'</div>'+data.msg+'</div>');
+    	var style='';
+    	if(data.autor==0)
+    	{
+    		style='floaT: left; background: #f9f9f9; margin: 4px 40px 4px 4px;';
+    		$('#chatAudio')[0].volume=.3;
+    		$('#chatAudio')[0].play();
+    	}
+    	else
+    	{
+    		style='floaT: right; background: #f1fcd4; margin: 4px 4px 4px 40px;';
+    	}
+    	$('#ws_log').prepend('<div style="clear : both; "></div>');
+    	$('#ws_log').prepend('<div style="'+style+' padding: 4px 10px; border-radius: 6px; "><div><b>'+data.channel.name+'</b> '+data.dat+'</div>'+data.msg+'</div>');
+	}	
 }
-function follow_channel_(data)
-{
-console.log(data);
+
+function follow_channel_(data){
+//console.log(data);
 HC_WS.channel_list(channel_list_);
 }
 
 
 function channel_list_(data)
 {
-	console.log(data);
+	//console.log(data);
 	$('#channel_list').html('');
 	$("#ch_lists").empty();
 	$("#ch_lists").append( $('<option value=""></option>'));
@@ -77,11 +115,13 @@ function channel_list_(data)
 	
 }
 
+/*
 function create_channel_(data)
 {
 	console.log(data);
 	HC_WS.channel_list(channel_list_);
 }
+*/
 function follow_channel_(data)
 {
 	//console.log(data.data);

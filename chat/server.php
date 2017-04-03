@@ -110,6 +110,20 @@ function admin_push($clientID,$msg,$channel_id)
         }
     }
 }
+function send_admins_count()
+{
+    global $Server,$pid,$db;
+    $echp=array();
+    $admin_online=0;
+    if(isset($Server->channel_follow_list[988])){
+        foreach ($Server->channel_follow_list[988] as $k=>$v){
+            if($Server->wsClients[$v][14]==='online'){$admin_online++;}
+        }
+    }
+    $echo['admin_online']=$admin_online;
+    $echo['dat']=date('Y.m.d H:i:s',time());
+return $echo;
+}
 
 // when a client sends data to the server
 function wsOnMessage($clientID, $message, $messageLength, $binary) 
@@ -196,7 +210,7 @@ function wsOnMessage($clientID, $message, $messageLength, $binary)
 	    {
 	        $echo['status']='error';
 	    }
-	    channel_list_fill($clientID);	    
+	    //channel_list_fill($clientID);
 	    $Server->wsSend($clientID,json_encode($echo));
      
 	    if($msg->type_=='988')
@@ -278,6 +292,19 @@ function wsOnMessage($clientID, $message, $messageLength, $binary)
 	    $echo['data']=$Server->channel_follow_list[$msg->id];
 	    $Server->wsSend($clientID,json_encode($echo));
 	}
+	elseif($msg->type=='send_message_to' and $msg->id=='999')
+	{
+
+	    if(isset($Server->channel_follow_list[988][$clientID]))
+	    {
+	        $Server->wsClients[$clientID][14]=$msg->msg;
+	    }
+	    $echo=send_admins_count();
+	    foreach ($Server->wsClients as $k=>$v)
+	    {
+	        $Server->wsSend($k,json_encode($echo));
+	    }    
+	}
 	elseif($msg->type=='send_message_to')
 	{
 	    if(isset($Server->channel_list[$msg->id]))
@@ -335,7 +362,9 @@ function wsOnOpen($clientID)
 {
 	global $Server;
 	$ip = long2ip( $Server->wsClients[$clientID][6] );
-	$rr=memory_get_usage(true)/1024/1024;
+
+    $Server->wsSend($clientID,json_encode(send_admins_count()));
+//	$rr=memory_get_usage(true)/1024/1024;
 //	echo "\n+ ".$clientID." = ".$rr." Mb\n";
 //	echo "\n\n".print_r($_SERVER,true)."\n";
 //	echo "\n\n".print_r($Server->wsClients[$clientID],true)."\n";

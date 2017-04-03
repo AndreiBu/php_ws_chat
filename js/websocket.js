@@ -17,6 +17,7 @@ var HC_WS = new function()
   
   this.after_connect=false;
   this.after_disconnect=false;
+  this.system_callback=false;
 
   
   this.run = function(url){
@@ -71,6 +72,7 @@ var HC_WS = new function()
 	this.parser = function(msg_)	
 	{
 		if(typeof this.callback_list[msg_.type] === "function"){this.callback_list[msg_.type](msg_);}
+		else if(typeof this.system_callback === "function"){this.system_callback(msg_);}
 		return false;
 	};
 
