@@ -210,7 +210,7 @@ function wsOnMessage($clientID, $message, $messageLength, $binary)
 	    {
 	        $echo['status']='error';
 	    }
-	    //channel_list_fill($clientID);
+	    channel_list_fill($clientID);
 	    $Server->wsSend($clientID,json_encode($echo));
      
 	    if($msg->type_=='988')

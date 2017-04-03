@@ -57,20 +57,20 @@ function onmessage_(data){
 console.log(data);
 }
 function follow_channel_(data){
-//console.log(data);
+console.log(data);
 }
 function _system_callback(data)
 {
-	if(data.admin_online!= undefined && data.admin_online>0)
+	if(data.admin_online!=undefined && data.admin_online>0)
 		{
 		append_ws_link();
 		}
-	if(data.admin_online!= undefined && data.admin_online==0)
+	if(data.admin_online!=undefined && data.admin_online==0)
 		{
 		append_iframe();
 		}
-//	console.log('system');
-//	console.log(data);
+	console.log('system');
+	console.log(data);
 }
 
 //############## HTML #############################
